@@ -40,6 +40,10 @@ print(data_set)
 kmeanModel = KMeans(n_clusters=3)
 kmeanModel.fit(data_set)
 
+predi = kmeanModel.predict(data_set)
+data_set2 = data_set
+data_set2['k-means'] = predi
+
 
 @app.route('/', methods=['POST'])
 def index():
@@ -66,10 +70,6 @@ def index():
 
 @app.route('/media', methods=['GET'])
 def media():
-    import pandas as pd
-    
-    predi = kmeanModel.predict(data_set)
-    data_set['k-means'] = predi
 
     k_means_0 = data_set['k-means']  == 0
     k_means_1 = data_set['k-means']  == 1
