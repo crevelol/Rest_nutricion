@@ -40,6 +40,7 @@ print(data_set)
 kmeanModel = KMeans(n_clusters=3)
 kmeanModel.fit(data_set)
 
+
 @app.route('/', methods=['POST'])
 def index():
 
@@ -54,7 +55,7 @@ def index():
         "Fiber": [request.json['Fiber']],
         "Carbs": [request.json['Carbs']],
     }
-    
+
     product = pd.DataFrame(produ)
     print(product)
     prediccion = int(kmeanModel.predict(product))
@@ -62,6 +63,54 @@ def index():
     print(prediccion)
             
     return jsonify({"status": "ok","result": prediccion})
+
+@app.route('/media', methods=['GET'])
+def media():
+    import pandas as pd
+    
+    predi = kmeanModel.predict(data_set)
+    data_set['k-means'] = predi
+
+    k_means_0 = data_set['k-means']  == 0
+    k_means_1 = data_set['k-means']  == 1
+    k_means_2 = data_set['k-means']  == 2
+
+    data0 = data_set[k_means_0]
+    data1 = data_set[k_means_1]
+    data2 = data_set[k_means_2]
+
+    prom0 = [
+        data0['Grams'].mean(),
+        data0['Calories'].mean(),
+        data0['Protein'].mean(),
+        data0['Fat'].mean(),
+        data0['Sat.Fat'].mean(),
+        data0['Fiber'].mean(),
+        data0['Carbs'].mean()
+    ]
+
+    prom1 = [
+        data1['Grams'].mean(),
+        data1['Calories'].mean(),
+        data1['Protein'].mean(),
+        data1['Fat'].mean(),
+        data1['Sat.Fat'].mean(),
+        data1['Fiber'].mean(),
+        data1['Carbs'].mean()
+    ]
+
+    prom2 = [
+        data2['Grams'].mean(),
+        data2['Calories'].mean(),
+        data2['Protein'].mean(),
+        data2['Fat'].mean(),
+        data2['Sat.Fat'].mean(),
+        data2['Fiber'].mean(),
+        data2['Carbs'].mean()
+    ]
+    
+            
+    return jsonify({"status": "ok","promedios":[prom0, prom1, prom2]})
 
 if __name__ == "__main__":
     app.run()
